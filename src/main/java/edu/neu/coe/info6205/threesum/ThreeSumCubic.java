@@ -1,5 +1,7 @@
 package edu.neu.coe.info6205.threesum;
 
+import edu.neu.coe.info6205.util.Stopwatch;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -22,6 +24,7 @@ class ThreeSumCubic implements ThreeSum {
     }
 
     public Triple[] getTriples() {
+        Stopwatch stp = new Stopwatch();
         List<Triple> triples = new ArrayList<>();
         for (int i = 0; i < length; i++)
             for (int j = i + 1; j < length; j++) {
@@ -31,6 +34,8 @@ class ThreeSumCubic implements ThreeSum {
                 }
             }
         Collections.sort(triples);
+        System.out.println("Stopwatch timer for ThreeSumCubic : "+stp.lap());
+        stp.close();
         return triples.stream().distinct().toArray(Triple[]::new);
     }
 

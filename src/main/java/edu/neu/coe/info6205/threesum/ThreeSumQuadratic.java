@@ -1,5 +1,7 @@
 package edu.neu.coe.info6205.threesum;
 
+import edu.neu.coe.info6205.util.Stopwatch;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -23,9 +25,12 @@ public class ThreeSumQuadratic implements ThreeSum {
     }
 
     public Triple[] getTriples() {
+        Stopwatch stp = new Stopwatch();
         List<Triple> triples = new ArrayList<>();
         for (int i = 0; i < length; i++) triples.addAll(getTriples(i));
         Collections.sort(triples);
+        System.out.println("Stopwatch timer for ThreeSumQuadratic : "+stp.lap());
+        stp.close();
         return triples.stream().distinct().toArray(Triple[]::new);
     }
 
