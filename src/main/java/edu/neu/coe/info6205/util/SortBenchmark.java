@@ -28,6 +28,8 @@ import java.util.stream.Stream;
 import static edu.neu.coe.info6205.util.SortBenchmarkHelper.generateRandomLocalDateTimeArray;
 import static edu.neu.coe.info6205.util.SortBenchmarkHelper.getWords;
 import static edu.neu.coe.info6205.util.Utilities.formatWhole;
+import edu.neu.coe.info6205.sort.HelperFactory;
+import edu.neu.coe.info6205.sort.elementary.HeapSort;
 
 public class SortBenchmark {
 
@@ -114,6 +116,10 @@ public class SortBenchmark {
         if (isConfigBenchmarkStringSorter("bubblesort"))
             runStringSortBenchmark(words, nWords, nRuns / 10, new BubbleSort<>(nWords, config), timeLoggersQuadratic);
 
+        if (isConfigBenchmarkStringSorter("heapsort")) {
+            Helper<String> helper = HelperFactory.create("Heapsort", nWords, config);
+            runStringSortBenchmark(words, nWords, nRuns, new HeapSort<>(helper), timeLoggersLinearithmic);
+        }
     }
 
     /**
@@ -297,7 +303,7 @@ public class SortBenchmark {
 
     final static LazyLogger logger = new LazyLogger(SortBenchmark.class);
 
-    final static Pattern regexLeipzig = Pattern.compile("[~\\t]*\\t(([\\s\\p{Punct}\\uFF0C]*\\p{L}+)*)");
+    final static Pattern regexLeipzig = Pattern.compile("[~\\t]\\t(([\\s\\p{Punct}\\uFF0C]\\p{L}+)*)");
 
     /**
      * This is based on log2(n!)
