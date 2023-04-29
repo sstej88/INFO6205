@@ -64,39 +64,57 @@ public class MergeSort<X extends Comparable<X>> extends SortWithHelper<X> {
             return;
         }
 
-        // FIXME : implement merge sort with insurance and no-copy optimizations
-        // END
         int mid = from + (to - from) / 2;
-        sort(aux, a, from, mid);
-        sort(aux, a, mid, to);
-        if (!noCopy) {
-            System.arraycopy(a, from, aux, from, to - from);
+        sort(a, aux, from, mid);
+        sort(a, aux, mid + 1, to);
+
+        if (!insurance || a[mid].compareTo(a[mid + 1]) <= 0) {
+            // If insurance is disabled or the two subarrays are already sorted, we can skip the merge step.
+            return;
         }
-        if (insurance) {
-            mergeWithInsurance(aux, a, from, mid, to);
+
+        // Merge the two sorted subarrays using the auxiliary array.
+        if (noCopy) {
+            mergeWithoutCopy(a, aux, from, mid, to);
         } else {
-            merge(aux, a, from, mid, to);
+            System.arraycopy(a, from, aux, from, to - from + 1);
+            mergeWithCopy(aux, a, from, mid, to);
         }
     }
 
-    private void mergeWithInsurance(X[] aux, X[] a, int from, int mid, int to) {
-        final Helper<X> helper = getHelper();
-        int i = from;
-        int j = mid;
-        for (int k = from; k < to; k++) {
-            if (i >= mid) {
-                helper.copy(a, j++, aux, k);
-            } else if (j >= to) {
-                helper.copy(a, i++, aux, k);
-            } else if (helper.less(a[j], a[i])) {
-                helper.incrementFixes(mid - i);
-                helper.copy(a, j++, aux, k);
+    private void mergeWithoutCopy(X[] a, X[] aux, int from, int mid, int to) {
+        int i = from, j = mid + 1, k = from;
+        while (i <= mid && j <= to) {
+            if (a[i].compareTo(a[j]) <= 0) {
+                aux[k++] = a[i++];
             } else {
-                helper.copy(a, i++, aux, k);
+                aux[k++] = a[j++];
             }
         }
+        while (i <= mid) {
+            aux[k++] = a[i++];
+        }
+        while (j <= to) {
+            aux[k++] = a[j++];
+        }
     }
 
+    private void mergeWithCopy(X[] aux, X[] a, int from, int mid, int to) {
+        int i = from, j = mid + 1, k = from;
+        while (i <= mid && j <= to) {
+            if (aux[i].compareTo(aux[j]) <= 0) {
+                a[k++] = aux[i++];
+            } else {
+                a[k++] = aux[j++];
+            }
+        }
+        while (i <= mid) {
+            a[k++] = aux[i++];
+        }
+        while (j <= to) {
+            a[k++] = aux[j++];
+        }
+    }
 
     // CONSIDER combine with MergeSortBasic perhaps.
     private void merge(X[] sorted, X[] result, int from, int mid, int to) {
@@ -125,4 +143,3 @@ public class MergeSort<X extends Comparable<X>> extends SortWithHelper<X> {
 
     private final InsertionSort<X> insertionSort;
 }
-
